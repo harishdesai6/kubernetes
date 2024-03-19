@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: statefulset
+metadata:
+  name: web
+spec:
+ selectors:
+  matchLabels:
+   name: nginx 
+ serviceName: nginx
+ replicas: 5
+ template:
+  metadata:
+    labels:
+     name: nginx
+  spec: 
+   terminationGracePeriodSeconds: 30
+   container:
+   - name: nginx
+     image: k8s.gcr.io/nginx-slim:0.8
+     ports:
+     - containerPort: 80
+       name: web
+     volumeMounts: 
+     - name: web
+       mountpath: /usr/share/nginx/html    
+   volumeClaimTemplates:
+   - metadata:
+       name: web
+     spec:
+       accessMOdes: ["ReadWriteOnce"]
+       storageClassName: "my-storage-class"  
+       resources:
+         requests:
+           storage: 1Gi  
+        
+   
